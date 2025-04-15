@@ -33,6 +33,16 @@ func (h *aliasHandler) baseArchiveHandler(w http.ResponseWriter, r *http.Request
 		return false
 	}
 
+	if session.archiveWorkers != nil {
+		select {
+		case session.archiveWorkers <- struct{}{}:
+			defer func() { <-session.archiveWorkers }()
+		default:
+			data.Status = http.StatusTooManyRequests
+			return false
+		}
+	}
+
 	selections, ok := h.normalizeArchiveSelections(r)
 	if !ok {
 		data.Status = http.StatusBadRequest

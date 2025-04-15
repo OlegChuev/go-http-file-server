@@ -77,8 +77,9 @@ type sessionContext struct {
 	isDelete bool
 	isMutate bool
 
-	isArchive     bool
-	archiveFormat archiveFormat
+	isArchive      bool
+	archiveFormat  archiveFormat
+	archiveWorkers chan struct{}
 
 	file *os.File
 

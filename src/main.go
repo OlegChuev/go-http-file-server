@@ -2,20 +2,21 @@ package src
 
 import (
 	"errors"
+	"os"
+	"os/signal"
+	"strconv"
+	"syscall"
+
 	"mjpclab.dev/ghfs/src/app"
 	"mjpclab.dev/ghfs/src/param"
 	"mjpclab.dev/ghfs/src/serverError"
 	"mjpclab.dev/ghfs/src/serverLog"
 	"mjpclab.dev/ghfs/src/setting"
 	"mjpclab.dev/ghfs/src/version"
-	"os"
-	"os/signal"
-	"strconv"
-	"syscall"
 )
 
 func cleanupOnEnd(appInst *app.App) {
-	chSignal := make(chan os.Signal)
+	chSignal := make(chan os.Signal, 1)
 	signal.Notify(chSignal, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
@@ -25,7 +26,7 @@ func cleanupOnEnd(appInst *app.App) {
 }
 
 func reInitOnHup(appInst *app.App) {
-	chSignal := make(chan os.Signal)
+	chSignal := make(chan os.Signal, 1)
 	signal.Notify(chSignal, syscall.SIGHUP)
 
 	go func() {
